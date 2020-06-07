@@ -146,8 +146,10 @@ def train(args: Dict):
         model = torch.nn.DataParallel(model)
 
     model.to(device)
-    model = torch.nn.DataParallel(model)
-    model = model.cuda()
+#    model = torch.nn.DataParallel(model)
+#    model = model.cuda()
+    print('GPUs------------------')
+    print(torch.cuda.device_count())
     print('GPUs------------------')
 #    model = model.to(device)
 
