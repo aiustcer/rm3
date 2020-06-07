@@ -138,7 +138,7 @@ def train(args: Dict):
     vocab_mask = torch.ones(len(vocab.tgt))
     vocab_mask[vocab.tgt['<pad>']] = 0
 ## 改分布式 2
-    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
+#   device = torch.device("cuda:0" if args['--cuda'] else "cpu")
     print('use device: %s' % device, file=sys.stderr)
     model = torch.nn.DataParallel(model)
 #    model = model.to(device)
