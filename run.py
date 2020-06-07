@@ -116,7 +116,7 @@ def train(args: Dict):
     dev_data = list(zip(dev_data_src, dev_data_tgt))
 
     train_batch_size = int(args['--batch-size'])
-    train_batch_size = 64
+    train_batch_size = 128
     clip_grad = float(args['--clip-grad'])
     valid_niter = int(args['--valid-niter'])
     log_every = int(args['--log-every'])
