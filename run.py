@@ -128,7 +128,6 @@ def train(args: Dict):
                 dropout_rate=float(args['--dropout']),
                 vocab=vocab)
     model.train()
-
     uniform_init = float(args['--uniform-init'])
     if np.abs(uniform_init) > 0.:
         print('uniformly initialize parameters [-%f, +%f]' % (uniform_init, uniform_init), file=sys.stderr)
@@ -144,7 +143,7 @@ def train(args: Dict):
     model = model.to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args['--lr']))
-
+    optimizer = torch.optim.
     num_trial = 0
     train_iter = patience = cum_loss = report_loss = cum_tgt_words = report_tgt_words = 0
     cum_examples = report_examples = epoch = valid_num = 0
@@ -319,6 +318,7 @@ def beam_search(model: NMT, test_data_src: List[List[str]], beam_size: int, max_
 def main():
     """ Main func.
     """
+    a = __doc__
     args = docopt(__doc__)
 
     # Check pytorch version
