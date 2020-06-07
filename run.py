@@ -44,7 +44,7 @@ import math
 import sys
 import pickle
 import time
-import os
+
 
 from docopt import docopt
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu, SmoothingFunction
@@ -116,9 +116,7 @@ def train(args: Dict):
     dev_data = list(zip(dev_data_src, dev_data_tgt))
 
     train_batch_size = int(args['--batch-size'])
-    print(train_batch_size)
-
-
+    train_batch_size = 64
     clip_grad = float(args['--clip-grad'])
     valid_niter = int(args['--valid-niter'])
     log_every = int(args['--log-every'])
@@ -140,21 +138,11 @@ def train(args: Dict):
 
     vocab_mask = torch.ones(len(vocab.tgt))
     vocab_mask[vocab.tgt['<pad>']] = 0
-## 改分布式 2
-    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
-#    print('use device: %s' % device, file=sys.stderr)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-        model = torch.nn.DataParallel(model)
 
-    model.to(device)
-#    model = torch.nn.DataParallel(model)
-#    model = model.cuda()
-    print('GPUs------------------')
-    print(torch.cuda.device_count())
-    print('GPUs------------------')
-#    model = model.to(device)
+    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
+    print('use device: %s' % device, file=sys.stderr)
+
+    model = model.to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args['--lr']))
 
@@ -353,6 +341,4 @@ def main():
 
 
 if __name__ == '__main__':
-
-    os.environ["CUDA_VISIBLE_DEVICES"] = '0,1'
     main()
