@@ -138,9 +138,16 @@ def train(args: Dict):
     vocab_mask = torch.ones(len(vocab.tgt))
     vocab_mask[vocab.tgt['<pad>']] = 0
 ## 改分布式 2
-#   device = torch.device("cuda:0" if args['--cuda'] else "cpu")
+    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
 #    print('use device: %s' % device, file=sys.stderr)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+        model = torch.nn.DataParallel(model)
+
+    model.to(device)
     model = torch.nn.DataParallel(model)
+    model = model.cuda()
     print('GPUs------------------')
 #    model = model.to(device)
 
