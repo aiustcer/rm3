@@ -23,7 +23,7 @@ Options:
     --seed=<int>                            seed [default: 0]
     --batch-size=<int>                      batch size [default: 32]
     --embed-size=<int>                      embedding size [default: 256]
-    --hidden-size=<int>                     hidden size [default: 256]
+    --hidden-size=<int>                     hidden size [default: 350]
     --clip-grad=<float>                     gradient clipping [default: 5.0]
     --log-every=<int>                       log every [default: 10]
     --max-epoch=<int>                       max epoch [default: 30]
@@ -143,7 +143,7 @@ def train(args: Dict):
     model = model.to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args['--lr']))
-    optimizer = torch.optim.
+
     num_trial = 0
     train_iter = patience = cum_loss = report_loss = cum_tgt_words = report_tgt_words = 0
     cum_examples = report_examples = epoch = valid_num = 0
