@@ -44,7 +44,7 @@ import math
 import sys
 import pickle
 import time
-
+import os
 
 from docopt import docopt
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu, SmoothingFunction
@@ -340,4 +340,5 @@ def main():
 
 
 if __name__ == '__main__':
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
     main()
