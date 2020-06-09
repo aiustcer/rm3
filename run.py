@@ -21,7 +21,7 @@ Options:
     --dev-tgt=<file>                        dev target file
     --vocab=<file>                          vocab file
     --seed=<int>                            seed [default: 0]
-    --batch-size=<int>                      batch size [default: 64]
+    --batch-size=<int>                      batch size [default: 186]
     --embed-size=<int>                      embedding size [default: 256]
     --hidden-size=<int>                     hidden size [default: 256]
     --clip-grad=<float>                     gradient clipping [default: 5.0]
@@ -29,11 +29,11 @@ Options:
     --max-epoch=<int>                       max epoch [default: 30]
     --input-feed                            use input feeding
     --patience=<int>                        wait for how many iterations to decay learning rate [default: 10]
-    --max-num-trial=<int>                   terminate training after how many trials [default: 5]
+    --max-num-trial=<int>                   terminate training after how many trials [default: 10]
     --lr-decay=<float>                      learning rate decay [default: 0.5]
     --beam-size=<int>                       beam size [default: 5]
     --sample-size=<int>                     sample size [default: 5]
-    --lr=<float>                            learning rate [default: 0.001]
+    --lr=<float>                            learning rate [default: 0.005]
     --uniform-init=<float>                  uniformly initialize all parameters [default: 0.1]
     --save-to=<file>                        model save path [default: model.bin]
     --valid-niter=<int>                     perform validation after how many iterations [default: 2000]
@@ -58,7 +58,7 @@ from vocab import Vocab, VocabEntry
 import torch
 import torch.nn.utils
 
-cuda_num = "cuda:1"
+cuda_num = "cuda:0"
 
 def evaluate_ppl(model, dev_data, batch_size=32):
     """ Evaluate perplexity on dev sentences
