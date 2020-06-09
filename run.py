@@ -21,19 +21,19 @@ Options:
     --dev-tgt=<file>                        dev target file
     --vocab=<file>                          vocab file
     --seed=<int>                            seed [default: 0]
-    --batch-size=<int>                      batch size [default: 126]
+    --batch-size=<int>                      batch size [default: 32]
     --embed-size=<int>                      embedding size [default: 256]
-    --hidden-size=<int>                     hidden size [default: 512]
+    --hidden-size=<int>                     hidden size [default: 256]
     --clip-grad=<float>                     gradient clipping [default: 5.0]
     --log-every=<int>                       log every [default: 10]
     --max-epoch=<int>                       max epoch [default: 30]
     --input-feed                            use input feeding
-    --patience=<int>                        wait for how many iterations to decay learning rate [default: 10]
-    --max-num-trial=<int>                   terminate training after how many trials [default: 10]
+    --patience=<int>                        wait for how many iterations to decay learning rate [default: 5]
+    --max-num-trial=<int>                   terminate training after how many trials [default: 5]
     --lr-decay=<float>                      learning rate decay [default: 0.5]
     --beam-size=<int>                       beam size [default: 5]
     --sample-size=<int>                     sample size [default: 5]
-    --lr=<float>                            learning rate [default: 0.005]
+    --lr=<float>                            learning rate [default: 0.001]
     --uniform-init=<float>                  uniformly initialize all parameters [default: 0.1]
     --save-to=<file>                        model save path [default: model.bin]
     --valid-niter=<int>                     perform validation after how many iterations [default: 2000]
@@ -58,7 +58,6 @@ from vocab import Vocab, VocabEntry
 import torch
 import torch.nn.utils
 
-cuda_num = "cuda:0"
 
 def evaluate_ppl(model, dev_data, batch_size=32):
     """ Evaluate perplexity on dev sentences
@@ -117,6 +116,9 @@ def train(args: Dict):
     dev_data = list(zip(dev_data_src, dev_data_tgt))
 
     train_batch_size = int(args['--batch-size'])
+    print(train_batch_size)
+
+
     clip_grad = float(args['--clip-grad'])
     valid_niter = int(args['--valid-niter'])
     log_every = int(args['--log-every'])
@@ -129,6 +131,7 @@ def train(args: Dict):
                 dropout_rate=float(args['--dropout']),
                 vocab=vocab)
     model.train()
+
     uniform_init = float(args['--uniform-init'])
     if np.abs(uniform_init) > 0.:
         print('uniformly initialize parameters [-%f, +%f]' % (uniform_init, uniform_init), file=sys.stderr)
@@ -137,11 +140,21 @@ def train(args: Dict):
 
     vocab_mask = torch.ones(len(vocab.tgt))
     vocab_mask[vocab.tgt['<pad>']] = 0
+## 改分布式 2
+    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
+#    print('use device: %s' % device, file=sys.stderr)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+        model = torch.nn.DataParallel(model)
 
-    device = torch.device(cuda_num if args['--cuda'] else "cpu")
-    print('use device: %s' % device, file=sys.stderr)
-
-    model = model.to(device)
+    model.to(device)
+#    model = torch.nn.DataParallel(model)
+#    model = model.cuda()
+    print('GPUs------------------')
+    print(torch.cuda.device_count())
+    print('GPUs------------------')
+#    model = model.to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=float(args['--lr']))
 
@@ -161,8 +174,9 @@ def train(args: Dict):
             optimizer.zero_grad()
 
             batch_size = len(src_sents)
-
-            example_losses = -model(src_sents, tgt_sents) # (batch_size,)
+            src_sents_gpu = src_sents.to(device)
+            tgt_sents_gpu = tgt_sents.to(device)
+            example_losses = -model(src_sents_gpu, tgt_sents_gpu) # (batch_size,)
             batch_loss = example_losses.sum()
             loss = batch_loss / batch_size
 
@@ -275,7 +289,7 @@ def decode(args: Dict[str, str]):
     model = NMT.load(args['MODEL_PATH'])
 
     if args['--cuda']:
-        model = model.to(torch.device(cuda_num))
+        model = model.to(torch.device("cuda:0"))
 
     hypotheses = beam_search(model, test_data_src,
                              beam_size=int(args['--beam-size']),
@@ -319,7 +333,6 @@ def beam_search(model: NMT, test_data_src: List[List[str]], beam_size: int, max_
 def main():
     """ Main func.
     """
-    a = __doc__
     args = docopt(__doc__)
 
     # Check pytorch version
@@ -341,5 +354,6 @@ def main():
 
 
 if __name__ == '__main__':
+
     os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
     main()
