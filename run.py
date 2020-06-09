@@ -175,9 +175,8 @@ def train(args: Dict):
             optimizer.zero_grad()
 
             batch_size = len(src_sents)
-            src_sents_gpu = src_sents.to(device)
-            tgt_sents_gpu = tgt_sents.to(device)
-            example_losses = -model(src_sents_gpu, tgt_sents_gpu) # (batch_size,)
+
+            example_losses = -model(src_sents, tgt_sents) # (batch_size,)
             batch_loss = example_losses.sum()
             loss = batch_loss / batch_size
 
