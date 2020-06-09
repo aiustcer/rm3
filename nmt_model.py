@@ -26,7 +26,7 @@ class NMT(nn.Module):
         - Unidirection LSTM Decoder
         - Global Attention Model (Luong, et al. 2015)
     """
-    def __init__(self, embed_size, hidden_size, vocab, divice, dropout_rate=0.2):
+    def __init__(self, embed_size, hidden_size, vocab, dropout_rate=0.2):
         """ Init NMT Model.
 
         @param embed_size (int): Embedding size (dimensionality)
@@ -50,7 +50,7 @@ class NMT(nn.Module):
         self.combined_output_projection = None
         self.target_vocab_projection = None
         self.dropout = None
-        self.device = divice
+
 
         ### YOUR CODE HERE (~8 Lines)
         ### TODO - Initialize the following variables:
@@ -100,8 +100,8 @@ class NMT(nn.Module):
         source_lengths = [len(s) for s in source]
 
         # Convert list of lists into tensors
-        source_padded = self.vocab.src.to_input_tensor(source, device=self.device)   # Tensor: (src_len, b)
-        target_padded = self.vocab.tgt.to_input_tensor(target, device=self.device)   # Tensor: (tgt_len, b)
+#        source_padded = self.vocab.src.to_input_tensor(source, device=self.device)   # Tensor: (src_len, b)
+#        target_padded = self.vocab.tgt.to_input_tensor(target, device=self.device)   # Tensor: (tgt_len, b)
 
         ###     Run the network forward:
         ###     1. Apply the encoder to `source_padded` by calling `self.encode()`

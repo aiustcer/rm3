@@ -130,8 +130,7 @@ def train(args: Dict):
     model = NMT(embed_size=int(args['--embed-size']),
                 hidden_size=int(args['--hidden-size']),
                 dropout_rate=float(args['--dropout']),
-                vocab=vocab,
-                divice=device)
+                vocab=vocab)
     model.train()
 
     uniform_init = float(args['--uniform-init'])
@@ -176,6 +175,8 @@ def train(args: Dict):
 
             batch_size = len(src_sents)
 
+            source_padded = Vocab.src.to_input_tensor(src_sents, device=device)  # Tensor: (src_len, b)
+            target_padded = Vocab.tgt.to_input_tensor(tgt_sents, device=device)  # Tensor: (tgt_len, b)
             example_losses = -model(src_sents, tgt_sents) # (batch_size,)
             batch_loss = example_losses.sum()
             loss = batch_loss / batch_size
