@@ -175,8 +175,8 @@ def train(args: Dict):
 
             batch_size = len(src_sents)
 
-            source_padded = Vocab.src.to_input_tensor(src_sents, device=device)  # Tensor: (src_len, b)
-            target_padded = Vocab.tgt.to_input_tensor(tgt_sents, device=device)  # Tensor: (tgt_len, b)
+            source_padded = vocab.src.to_input_tensor(src_sents, device=device)  # Tensor: (src_len, b)
+            target_padded = vocab.tgt.to_input_tensor(tgt_sents, device=device)  # Tensor: (tgt_len, b)
             example_losses = -model(src_sents, tgt_sents) # (batch_size,)
             batch_loss = example_losses.sum()
             loss = batch_loss / batch_size
