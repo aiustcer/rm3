@@ -26,7 +26,7 @@ class NMT(nn.Module):
         - Unidirection LSTM Decoder
         - Global Attention Model (Luong, et al. 2015)
     """
-    def __init__(self, embed_size, hidden_size, vocab, dropout_rate=0.2):
+    def __init__(self, embed_size, hidden_size, vocab, divice, dropout_rate=0.2):
         """ Init NMT Model.
 
         @param embed_size (int): Embedding size (dimensionality)
@@ -50,7 +50,7 @@ class NMT(nn.Module):
         self.combined_output_projection = None
         self.target_vocab_projection = None
         self.dropout = None
-
+        self.device = divice
 
         ### YOUR CODE HERE (~8 Lines)
         ### TODO - Initialize the following variables:

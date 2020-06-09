@@ -125,11 +125,13 @@ def train(args: Dict):
     model_save_path = args['--save-to']
 
     vocab = Vocab.load(args['--vocab'])
-
+    ## 改分布式 2
+    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
     model = NMT(embed_size=int(args['--embed-size']),
                 hidden_size=int(args['--hidden-size']),
                 dropout_rate=float(args['--dropout']),
-                vocab=vocab)
+                vocab=vocab,
+                divice=device)
     model.train()
 
     uniform_init = float(args['--uniform-init'])
@@ -140,8 +142,7 @@ def train(args: Dict):
 
     vocab_mask = torch.ones(len(vocab.tgt))
     vocab_mask[vocab.tgt['<pad>']] = 0
-## 改分布式 2
-    device = torch.device("cuda:0" if args['--cuda'] else "cpu")
+
 #    print('use device: %s' % device, file=sys.stderr)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
