@@ -85,7 +85,7 @@ class NMT(nn.Module):
         ### END YOUR CODE
 
 
-    def forward(self, source: List[List[str]], target: List[List[str]]) -> torch.Tensor:
+    def forward(self, source: List[List[str]], target: List[List[str]], device) -> torch.Tensor:
         """ Take a mini-batch of source and target sentences, compute the log-likelihood of
         target sentences under the language models learned by the NMT system.
 
@@ -100,10 +100,9 @@ class NMT(nn.Module):
         source_lengths = [len(s) for s in source]
 
         # Convert list of lists into tensors
-#        source_padded = self.vocab.src.to_input_tensor(source, device=self.device)   # Tensor: (src_len, b)
-#        target_padded = self.vocab.tgt.to_input_tensor(target, device=self.device)   # Tensor: (tgt_len, b)
-        source_padded = source
-        target_padded = target
+        source_padded = self.vocab.src.to_input_tensor(source, device=device)   # Tensor: (src_len, b)
+        target_padded = self.vocab.tgt.to_input_tensor(target, device=device)   # Tensor: (tgt_len, b)
+
         ###     Run the network forward:
         ###     1. Apply the encoder to `source_padded` by calling `self.encode()`
         ###     2. Generate sentence masks for `source_padded` by calling `self.generate_sent_masks()`
