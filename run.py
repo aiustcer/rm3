@@ -116,7 +116,7 @@ def train(args: Dict):
     dev_data = list(zip(dev_data_src, dev_data_tgt))
 
     train_batch_size = int(args['--batch-size'])
-    train_batch_size = input("batch_size")
+    train_batch_size = int(input("batch_size\n"))
     print(train_batch_size)
 
 
