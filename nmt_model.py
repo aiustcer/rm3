@@ -175,7 +175,18 @@ class NMT(nn.Module):
         X = pack_padded_sequence(X, source_lengths)
 
         enc_hiddens, (last_hidden, last_cell) = self.encoder(X)  # input shape (seq_len, batch, input_size)
+
         enc_hiddens = pad_packed_sequence(enc_hiddens)[0]   # (src_len, b, h*2)
+#debug
+#        h_1 = enc_hiddens[0, 0, 0:self.hidden_size]
+#        h_1_r = enc_hiddens[0, 0, self.hidden_size:2*self.hidden_size]
+#        h_2 = enc_hiddens[-1, 0, 0:self.hidden_size]
+#        h_2_r = enc_hiddens[-1, 0, self.hidden_size:2*self.hidden_size]
+#        h_3 = last_hidden[0, 0,:]
+#        h_4 = last_hidden[1, 0,:]
+
+
+
         enc_hiddens = enc_hiddens.permute(1, 0, 2)  # (b, src_len, h*2)
 
         init_decoder_hidden = self.h_projection(torch.cat((last_hidden[0], last_hidden[1]), dim=1))
